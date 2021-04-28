@@ -3,9 +3,10 @@ describe('Test of index', () => {
     cy.visit('/')
   })
  
-  it('Should display SDI Library', () =>{
-    should.('header' /SDI Library/)
-    expect.('heading').getby
+  it('Should display a heading with  SDI Library', () => {
+   cy.findByRole('heading', /SDI Library/ ).should('exist');
   })
 
+
 })
+
