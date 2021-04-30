@@ -1,0 +1,37 @@
+version: "3.1"
+
+services:
+  client:
+    image: client
+    container_name: library-client
+    build: ./client
+    ports:
+      - 3000:3000
+      
+  server: 
+    image: server
+    container_name: library-server
+    build: ./server
+    ports:
+      - 8080:8080
+    depends_on: 
+      - db
+    restart: always
+    environment: 
+      - DB_CONNECTION_STRING=postgresql://docker:password@db:5432/docker
+      - NODE_ENV=development
+    networks:
+      - app_network     
+  db:
+    build: ./db
+    container_name: pg
+    networks: 
+      - app_network
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db/volumes/postgres:/var/lib/postgresql/data
+
+networks:
+  app_network:
+    driver: bridge    

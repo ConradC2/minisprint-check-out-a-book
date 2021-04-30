@@ -7,7 +7,7 @@ exports.up = function(knex) {
         table.string('isbn', 13);
         table.boolean('isCheckedOut').defaultTo(0);
         table.date('due_date');
-        table.integer('userID')
+        table.integer('userID');
   })
 };
 
@@ -23,3 +23,4 @@ exports.down = function(knex) {
 // * If the book is checked out or not
 // * Date due back if checked out
 // * UserId of user that checked out the book
+              

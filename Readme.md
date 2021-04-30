@@ -43,11 +43,11 @@ This should be containerized and utilize `docker-compose`, and should have a REA
 - [X] As a user, I want to be able to check out a book for two weeks so that I may read it.
     API endpoint: `/api/books/:bookId/checkout/:userId`
     
-- [ ] As a user, I want to know if a book is available to checkout (if I am the person that checked it out, I should see a message indicating that I have the book already and if someone else checked the book out, I should see a message telling me to check back after the current due date of the book), so that I can save time.
+- [X] As a user, I want to know if a book is available to checkout (if I am the person that checked it out, I should see a message indicating that I have the book already and if someone else checked the book out, I should see a message telling me to check back after the current due date of the book), so that I can save time.
     API endpoint: `/api/books/:bookId/checkout/:userId`
     
-- [ ]  As a librarian, I want to be able to check on the due date for a book that someone just checked out so that I may 	keep track of its status and identify the person who checked it out.
+- [X]  As a librarian, I want to be able to check on the due date for a book that someone just checked out so that I may 	keep track of its status and identify the person who checked it out.
     API endpoint: `/api/books/:bookId`
     
-- [ ] As a librarian, I want to be able to update the system for a book that has been returned
+- [X] As a librarian, I want to be able to update the system for a book that has been returned
     API endpoint: `/api/books/:bookId/return`

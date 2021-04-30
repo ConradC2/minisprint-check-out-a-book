@@ -1,4 +1,5 @@
-FROM postgres
+
+FROM postgres:12.2-alpine
 
 USER postgres
 

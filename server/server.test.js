@@ -11,29 +11,24 @@ afterAll( async () => {
    await dropDatabase();
 });
 
-describe('# /api/books tests', () => {
-   it('Simply responds', function(done) {
-       request
-        .get('/api/books')
-        .expect(200, done)
+describe('# /api/books tests',  () => {
+   it('Simply responds', async () => {
+       const response = await request.get('/api/books')
+        expect(response.status).toBe(200)
    });
 
    it('Returns an array of 10 items', async () => {
       const response = await request.get('/api/books');
-      expect(response.status).toBe(200);
+      expect(response.statusCode).toBe(200);
       expect(response.body).toHaveLength(10);
    })
 });
 
 describe(' # /api/books:id tests', () => {
-   it('should return a single book', done => {
-      request
-      .get('/api/books/1')
-      .expect(200)
-      .end( (err, res) => {
-         expect(res.body.length).toBe(1)
-         done();
-      });
+   it('should return a single book', async () => {
+      const response = await request.get('/api/books/1');
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(1);
    });
 
    it('should return details for a book', (done) => {
@@ -44,12 +39,12 @@ describe(' # /api/books:id tests', () => {
             if (err) return done(err);
             expect(res.body[0]).toEqual({
                author: expect.any(String),
-               due_date: expect.any(String),
+               due_date: null,
                id: expect.any(Number),
                isCheckedOut: expect.any(Boolean),
                isbn: expect.any(String),
                title: expect.any(String),
-               userID: expect.any(Number)
+               userID: null
             });
             return done();
          })
@@ -57,39 +52,55 @@ describe(' # /api/books:id tests', () => {
 });
 
 describe(' # api/books/:bookId/checkout/:userId test,', () => {
-   it('should be able to check out a book for two weeks', (done) => {
-      request
-         .patch('/api/books/1/checkout/1')
-         .expect(200, {
-            Message: 'Okay'
-         }, done)
+   it('should be able to check out a book for two weeks', async () => {
+      const response = await request.patch('/api/books/1/checkout/1');
+      expect(response.status).toBe(200)
+      expect(response.body.message).toBe("Okay");
    });
 
-   it('should be able to check if a book is available to checkout', (done) => {
-      request
-         .get('/api/books/2/checkout/1')
-         .expect(200, {
-            Message: 'This book is available.'
-         }, done)
+   it('should be able to check if a book is available to checkout', async () => {
+      const response = await request.get('/api/books/2/checkout/1')
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('This book is available.');
+   });
+
+   it('should return a message notifying the user that he/she has the book checked out', async () => {
+      const response = await request.get('/api/books/1/checkout/1')
+         expect(response.status).toBe(200);
+         expect(response.body.message).toBe('You have this book checked out.');
    })
 
+   it('should return a message notifying the user to check back after current due date', async () => {
+      const response = await request.get('/api/books/1/checkout/2')
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe(`This book is checked out. Please check back after Fri May 14 2021 00:00:00 GMT+0200 (Central European Summer Time).`);
+   });
+
+   it('should allow the librarian to return a book to the "shelf"', async () => {
+      const response = await request.patch('/api/books/1/return')
+         expect(response.status).toBe(200);
+         expect(response.body.message).toBe('This book haas been returned.');
+   });
 });
 
-// Possibility 0:
-// GET /api/books/2/checkout/3 - user wants to check availability of a book that's not checkout
-// RESPONSE { message: "the book is available"}
+describe('# /api/users/ test', () => {
+   it('should add a new user', async () => {
+      const response = await request
+         .post('/api/users/')
+         .send({
+            firstName: "john",
+            lastName: "smith",
+            librarian: false
+         })
+         .set('Content-Type', 'application/json');
+      
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('user added successfully.')
+   });
 
-// Possibility 1:
-// GET /api/books/2/checkout/3 - same user wants to checkout books
-// RESPONSE { message: "you have this book checked out"}
-
-// Possibility 2:
-// GET /api/books/1/checkout/6 - another user wants to checkout same books
-// RESPONSE { message: `check back after the current due date ${due_date} of the book`}
-
-/*
-- [ ] As a user, I want to know if a book is available to checkout (if I am the person that checked it out, I should 
-   see a message indicating that I have the book already and if someone else checked the book out, 
-   I should see a message telling me to check back after the current due date of the book), so that I can save time.
-    API endpoint: `/api/books/:bookId/checkout/:userId`
-*/
+   it('should be able to see a list of users that exist in the system', async () => {
+      const response = await request.get('/api/users/')
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveLength(7);
+   })
+});

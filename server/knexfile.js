@@ -1,4 +1,7 @@
 // Update with your config settings.
+require('dotenv').config();
+
+const connection = process.env.DB_CONNECTION_STRING;
 
 module.exports = {
   test: {
@@ -6,10 +9,10 @@ module.exports = {
     connection: {
       database: 'docker',
       user:     'docker',
-      password: 'docker',
+      password: 'password',
       host: '127.0.0.1',
       port: '5432'
-    },
+    },    
     migrations: {
       tableName: 'knex_migrations',
       directory: './db/migrations'
@@ -21,13 +24,7 @@ module.exports = {
 
   development: {
     client: 'postgresql',
-    connection: {
-      database: 'docker',
-      user:     'docker',
-      password: 'docker',
-      host: '127.0.0.1',
-      port: '5432'
-    },
+    connection,
     migrations: {
       tableName: 'knex_migrations',
       directory: './db/migrations'
